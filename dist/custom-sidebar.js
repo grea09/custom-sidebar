@@ -59,8 +59,10 @@ function Current_Order(config) {
 }
 
 function rearrange(order){
-  for (var i = order.length - 1; i >= 0; i--) {
-    moveItem(Root, order[i].item.toLowerCase(), order[i].bottom, order[i].hide, order[i].href);
+  if (Array.isArray(order)) {
+    for (var i = order.length - 1; i >= 0; i--) {
+      moveItem(Root, order[i].item.toLowerCase(), order[i].bottom, order[i].hide, order[i].href);
+    }
   }
 }
 
@@ -71,6 +73,11 @@ function run() {
     var req = new XMLHttpRequest();
     req.onload = function () {
       var order = Current_Order(YAML.parse(this.responseText));
+      if (!Array.isArray(order)) {
+        clearInterval(Hacky_Hackerson);
+        console.error("Custom Sidebar: cannot load /www/sidebar-order.yaml");
+        return;
+      }
       rearrange(order);
       clearInterval(Hacky_Hackerson)
       console.log("Custom Sidebar is loaded");
